@@ -8,6 +8,7 @@ import { HoleInOneScene } from './games/hole-in-one/HoleInOneScene.js';
 import { RyeMatch3Scene } from './games/rye-match3/RyeMatch3Scene.js';
 import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
 import { OilBladderScene } from './games/oil-bladder/OilBladderScene.js';
+import { SpareASquareScene } from './games/spare-a-square/SpareASquareScene.js';
 import { MailChaosScene } from './games/mail-chaos/MailChaosScene.js';
 
 const config = {
@@ -33,6 +34,7 @@ const config = {
     RyeMatch3Scene,
     SoupNaziScene,
     OilBladderScene,
+    SpareASquareScene,
     MailChaosScene,
   ],
 };
