@@ -1,6 +1,9 @@
 import Phaser from 'phaser';
 import { ensureThemePlaying } from './BootScene.js';
 
+const WHEEL_SCROLL_SPEED = 0.5;
+const DRAG_THRESHOLD = 8;
+
 const GAMES = [
   { key: 'LaserPointerScene', title: 'The Laser Pointer', description: 'Zap George in the movie theater!' },
   { key: 'FroggerScene', title: 'The Frogger', description: 'Push the arcade machine across the street!' },
@@ -61,10 +64,77 @@ export class MenuScene extends Phaser.Scene {
     g.lineStyle(1, 0x333355);
     g.lineBetween(width / 2 - 250, 142, width / 2 + 250, 142);
 
-    // ---------- Game Buttons ----------
+    // ---------- Scrollable Game Buttons ----------
+    const listTop = 153;
+    const listBottom = height - 22;
+    const listVisibleHeight = listBottom - listTop;
+    const buttonSpacing = 68;
+    const totalContentHeight = GAMES.length * buttonSpacing;
+
+    this.listTop = listTop;
+    this.listBottom = listBottom;
+    this.scrollY = 0;
+    this.maxScroll = Math.max(0, totalContentHeight - listVisibleHeight);
+    this.isDragging = false;
+
+    // Container holds all game buttons; scrolling shifts its Y
+    this.listContainer = this.add.container(0, 0);
+
     GAMES.forEach((game, index) => {
-      const y = 185 + index * 68;
+      const y = 185 + index * buttonSpacing;
       this.createGameButton(width, y, game);
+    });
+
+    // Mask clips the container to the visible list area
+    const maskShape = this.make.graphics({ add: false });
+    maskShape.fillRect(0, listTop, width, listVisibleHeight);
+    this.listContainer.setMask(maskShape.createGeometryMask());
+
+    // Scroll hint (shown when list overflows)
+    this.scrollHint = this.add.text(width / 2, listBottom - 8, '▼  scroll for more', {
+      fontSize: '11px',
+      fontFamily: 'Arial, Helvetica, sans-serif',
+      color: '#555577',
+    }).setOrigin(0.5).setAlpha(0);
+
+    if (this.maxScroll > 0) {
+      this.tweens.add({
+        targets: this.scrollHint,
+        alpha: { from: 0.3, to: 0.8 },
+        yoyo: true,
+        repeat: -1,
+        duration: 1200,
+      });
+    }
+
+    // Mouse-wheel scrolling
+    this.input.on('wheel', (ptr, objs, dx, dy) => {
+      this._setScroll(this.scrollY + dy * WHEEL_SCROLL_SPEED);
+    });
+
+    // Touch / pointer drag scrolling
+    let dragStartY = 0;
+    let dragStartScroll = 0;
+
+    this.input.on('pointerdown', (ptr) => {
+      if (ptr.y >= this.listTop && ptr.y <= this.listBottom) {
+        dragStartY = ptr.y;
+        dragStartScroll = this.scrollY;
+        this.isDragging = false;
+      }
+    });
+
+    this.input.on('pointermove', (ptr) => {
+      if (!ptr.isDown) return;
+      const delta = dragStartY - ptr.y;
+      if (Math.abs(delta) > DRAG_THRESHOLD) {
+        this.isDragging = true;
+        this._setScroll(dragStartScroll + delta);
+      }
+    });
+
+    this.input.on('pointerup', () => {
+      this.isDragging = false;
     });
 
     // Footer
@@ -74,6 +144,25 @@ export class MenuScene extends Phaser.Scene {
       color: '#444444',
       fontStyle: 'italic',
     }).setOrigin(0.5);
+  }
+
+  _setScroll(newScrollY) {
+    this.scrollY = Phaser.Math.Clamp(newScrollY, 0, this.maxScroll);
+    this.listContainer.setY(-this.scrollY);
+    if (this.scrollHint) {
+      if (this.scrollY >= this.maxScroll) {
+        this.tweens.killTweensOf(this.scrollHint);
+        this.scrollHint.setAlpha(0);
+      } else if (!this.tweens.isTweening(this.scrollHint) && this.maxScroll > 0) {
+        this.tweens.add({
+          targets: this.scrollHint,
+          alpha: { from: 0.3, to: 0.8 },
+          yoyo: true,
+          repeat: -1,
+          duration: 1200,
+        });
+      }
+    }
   }
 
   drawLogo(width) {
@@ -195,6 +284,8 @@ export class MenuScene extends Phaser.Scene {
       color: '#777777',
     }).setOrigin(0.5);
 
+    this.listContainer.add([bg, accent, title, desc]);
+
     bg.on('pointerover', () => {
       bg.setFillStyle(0x1a3a5c, 0.95);
       bg.setStrokeStyle(2, 0xe94560);
@@ -211,11 +302,14 @@ export class MenuScene extends Phaser.Scene {
       desc.setColor('#777777');
     });
 
-    bg.on('pointerdown', () => {
-      this.cameras.main.fadeOut(200, 0, 0, 0);
-      this.time.delayedCall(200, () => {
-        this.scene.start(game.key);
-      });
+    bg.on('pointerup', (ptr) => {
+      // Only navigate if it was a tap (not a scroll drag) and pointer is in the list area
+      if (!this.isDragging && ptr.y >= this.listTop && ptr.y <= this.listBottom) {
+        this.cameras.main.fadeOut(200, 0, 0, 0);
+        this.time.delayedCall(200, () => {
+          this.scene.start(game.key);
+        });
+      }
     });
   }
 }
