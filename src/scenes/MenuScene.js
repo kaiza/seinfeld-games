@@ -115,17 +115,21 @@ export class MenuScene extends Phaser.Scene {
     // Touch / pointer drag scrolling
     let dragStartY = 0;
     let dragStartScroll = 0;
+    let dragActive = false;
 
     this.input.on('pointerdown', (ptr) => {
       if (ptr.y >= this.listTop && ptr.y <= this.listBottom) {
         dragStartY = ptr.y;
         dragStartScroll = this.scrollY;
         this.isDragging = false;
+        dragActive = true;
+      } else {
+        dragActive = false;
       }
     });
 
     this.input.on('pointermove', (ptr) => {
-      if (!ptr.isDown) return;
+      if (!ptr.isDown || !dragActive) return;
       const delta = dragStartY - ptr.y;
       if (Math.abs(delta) > DRAG_THRESHOLD) {
         this.isDragging = true;
@@ -135,6 +139,7 @@ export class MenuScene extends Phaser.Scene {
 
     this.input.on('pointerup', () => {
       this.isDragging = false;
+      dragActive = false;
     });
 
     // Footer
