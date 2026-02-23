@@ -7,6 +7,7 @@ import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
 import { ParkingGarageScene } from './games/parking-garage/ParkingGarageScene.js';
 import { LaserPointerScene } from './games/laser-pointer/LaserPointerScene.js';
 import { FroggerScene } from './games/frogger/FroggerScene.js';
+import { HoleInOneScene } from './games/hole-in-one/HoleInOneScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -30,6 +31,7 @@ const config = {
     ParkingGarageScene,
     LaserPointerScene,
     FroggerScene,
+    HoleInOneScene,
   ],
 };
 

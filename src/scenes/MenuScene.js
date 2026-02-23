@@ -7,6 +7,7 @@ const GAMES = [
   { key: 'ParkingGarageScene', title: 'Parking Garage', description: 'Find your car before time runs out' },
   { key: 'LaserPointerScene', title: 'The Laser Pointer', description: 'Zap George in the movie theater!' },
   { key: 'FroggerScene', title: 'The Frogger', description: 'Push the arcade machine across the street!' },
+  { key: 'HoleInOneScene', title: 'Hole in One', description: 'Hit the whale with a golf ball as Kramer' },
 ];
 
 export class MenuScene extends Phaser.Scene {
@@ -33,9 +34,9 @@ export class MenuScene extends Phaser.Scene {
 
     // Game selection buttons
     GAMES.forEach((game, index) => {
-      const y = 180 + index * 65;
+      const y = 170 + index * 58;
 
-      const bg = this.add.rectangle(width / 2, y, 500, 70, 0x16213e)
+      const bg = this.add.rectangle(width / 2, y, 500, 62, 0x16213e)
         .setStrokeStyle(2, 0x0f3460)
         .setInteractive({ useHandCursor: true });
 
