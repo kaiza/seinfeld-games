@@ -9,6 +9,7 @@ import { RyeMatch3Scene } from './games/rye-match3/RyeMatch3Scene.js';
 import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
 import { OilBladderScene } from './games/oil-bladder/OilBladderScene.js';
 import { SpareASquareScene } from './games/spare-a-square/SpareASquareScene.js';
+import { MailChaosScene } from './games/mail-chaos/MailChaosScene.js';
 import { LittleKicksScene } from './games/little-kicks/LittleKicksScene.js';
 import { JeanPaulScene } from './games/jean-paul/JeanPaulScene.js';
 
@@ -36,6 +37,7 @@ const config = {
     SoupNaziScene,
     OilBladderScene,
     SpareASquareScene,
+    MailChaosScene,
     LittleKicksScene,
     JeanPaulScene,
   ],

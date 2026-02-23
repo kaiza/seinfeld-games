@@ -882,3 +882,4 @@ export class SpareASquareScene extends Phaser.Scene {
     });
   }
 }
+
