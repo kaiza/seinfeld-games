@@ -7,6 +7,7 @@ import { FroggerScene } from './games/frogger/FroggerScene.js';
 import { HoleInOneScene } from './games/hole-in-one/HoleInOneScene.js';
 import { RyeMatch3Scene } from './games/rye-match3/RyeMatch3Scene.js';
 import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
+import { OilBladderScene } from './games/oil-bladder/OilBladderScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -30,6 +31,7 @@ const config = {
     HoleInOneScene,
     RyeMatch3Scene,
     SoupNaziScene,
+    OilBladderScene,
   ],
 };
 

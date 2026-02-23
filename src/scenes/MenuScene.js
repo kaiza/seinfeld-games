@@ -8,6 +8,7 @@ const GAMES = [
   { key: 'RyeMatch3Scene', title: 'Jerry vs. The Rye', description: 'Match-3 your way to placing the marble rye!' },
   { key: 'ParkingGarageScene', title: 'Parking Garage', description: 'Find your car before time runs out' },
   { key: 'SoupNaziScene', title: 'The Soup Nazi', description: 'Serve the right soup before customers lose patience!' },
+  { key: 'OilBladderScene', title: "Kramer's Oil Bladder", description: 'Drop the bladder from the roof and hit the girlfriend below!' },
 ];
 
 // Seinfeld-style letter offsets for the wavy baseline effect
