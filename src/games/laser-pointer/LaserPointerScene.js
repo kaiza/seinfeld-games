@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureThemePlaying } from '../../scenes/BootScene.js';
 
 /**
  * The Laser Pointer - A whack-a-mole mini-game
@@ -41,6 +42,7 @@ export class LaserPointerScene extends Phaser.Scene {
   }
 
   create() {
+    ensureThemePlaying(this);
     const { width, height } = this.scale;
 
     // Use custom cursor (crosshair) for laser pointer feel

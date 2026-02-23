@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureThemePlaying } from './BootScene.js';
 
 const GAMES = [
   { key: 'ParkingGarageScene', title: 'Parking Garage', description: 'Find your car before time runs out' },
@@ -26,6 +27,7 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create() {
+    ensureThemePlaying(this);
     const { width, height } = this.scale;
 
     // ---------- Background ----------

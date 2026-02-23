@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureThemePlaying } from '../../scenes/BootScene.js';
 
 /**
  * Hole in One - A golf/whale targeting mini-game
@@ -27,6 +28,7 @@ export class HoleInOneScene extends Phaser.Scene {
   }
 
   create() {
+    ensureThemePlaying(this);
     const { width, height } = this.scale;
 
     // --- Sky gradient (background) ---

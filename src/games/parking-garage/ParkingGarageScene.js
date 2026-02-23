@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { generateGarage, CELL } from './MazeGenerator.js';
 import { Character, CHARACTER_DEFS } from './Characters.js';
 import { SecurityGuard } from './SecurityGuard.js';
+import { ensureThemePlaying } from '../../scenes/BootScene.js';
 
 /**
  * The Parking Garage — A maze/navigation mini-game
@@ -50,6 +51,7 @@ export class ParkingGarageScene extends Phaser.Scene {
   }
 
   create() {
+    ensureThemePlaying(this);
     const { width, height } = this.scale;
 
     // Generate the garage

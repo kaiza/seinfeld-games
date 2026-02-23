@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { ensureThemePlaying } from '../../scenes/BootScene.js';
 
 /**
  * The Frogger - Classic Frogger-style mini-game
@@ -41,6 +42,7 @@ export class FroggerScene extends Phaser.Scene {
   }
 
   create() {
+    ensureThemePlaying(this);
     const { width, height } = this.scale;
 
     this.drawBackground();
