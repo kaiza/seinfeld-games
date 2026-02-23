@@ -6,7 +6,7 @@ export class BootScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.audio('seinfeld-theme', '/assets/audio/seinfeld.mp3');
+    this.load.audio('seinfeld-theme', 'assets/audio/seinfeld.mp3');
   }
 
   create() {
