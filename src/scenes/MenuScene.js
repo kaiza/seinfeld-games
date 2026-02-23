@@ -7,6 +7,7 @@ const GAMES = [
   { key: 'HoleInOneScene', title: 'Hole in One', description: 'Hit the whale with a golf ball as Kramer' },
   { key: 'RyeMatch3Scene', title: 'Jerry vs. The Rye', description: 'Match-3 your way to placing the marble rye!' },
   { key: 'ParkingGarageScene', title: 'Parking Garage', description: 'Find your car before time runs out' },
+  { key: 'SoupNaziScene', title: 'The Soup Nazi', description: 'Serve the right soup before customers lose patience!' },
 ];
 
 // Seinfeld-style letter offsets for the wavy baseline effect
