@@ -12,7 +12,11 @@ const COMBOS = [
   { modifier: 'CTRL', arrow: 'DOWN', label: 'Ctrl + ↓' },
 ];
 
-const DANCE_MOVES = ['kickLeft', 'kickRight', 'thumbsUp', 'fullSpin'];
+const DANCE_MOVES = [
+  'kickLeft', 'kickLeft', 'kickRight', 'kickRight',
+  'thumbsHike', 'thumbsHike', 'headJerk', 'headJerk',
+  'doubleKick', 'fullSpin',
+];
 const HIT_MESSAGES = ["Nice!", "Fabulous!", "That's gold!", "Giddyup!", "Spectacular!"];
 const MISS_MESSAGES = ["Yikes!", "Oh no!", "The little kicks!", "Sweet fancy Moses!"];
 
@@ -487,14 +491,33 @@ export class LittleKicksScene extends Phaser.Scene {
   drawElaine(container, pose) {
     const g = this.add.graphics();
 
+    // Head jerk offset — Elaine's signature head snap to one side
+    const headTilt = pose === 'headJerk' ? -8
+      : pose === 'stumble' ? 3
+      : pose === 'kickLeft' ? -3
+      : pose === 'kickRight' ? 3
+      : 0;
+
+    // Body lean for kicks
+    const bodyLean = pose === 'kickLeft' ? 3
+      : pose === 'kickRight' ? -3
+      : pose === 'doubleKick' ? -2
+      : pose === 'stumble' ? 4
+      : 0;
+
     // --- Shoes ---
     g.fillStyle(0x222222, 1);
     if (pose === 'kickLeft') {
-      g.fillRoundedRect(-28, 28, 14, 7, 3);
-      g.fillRoundedRect(4, 28, 14, 7, 3);
+      // Left foot way out to the side — the classic little kick
+      g.fillRoundedRect(-38, 18, 14, 7, 3);
+      g.fillRoundedRect(2 + bodyLean, 28, 14, 7, 3);
     } else if (pose === 'kickRight') {
-      g.fillRoundedRect(-16, 28, 14, 7, 3);
-      g.fillRoundedRect(20, 20, 14, 7, 3);
+      g.fillRoundedRect(-16 + bodyLean, 28, 14, 7, 3);
+      g.fillRoundedRect(30, 16, 14, 7, 3);
+    } else if (pose === 'doubleKick') {
+      // Both feet off the ground, kicked forward
+      g.fillRoundedRect(-30, 14, 14, 7, 3);
+      g.fillRoundedRect(18, 14, 14, 7, 3);
     } else if (pose === 'stumble') {
       g.fillRoundedRect(-20, 32, 14, 7, 3);
       g.fillRoundedRect(8, 30, 14, 7, 3);
@@ -506,41 +529,56 @@ export class LittleKicksScene extends Phaser.Scene {
     // --- Legs ---
     g.fillStyle(0x2a2a6e, 1);
     if (pose === 'kickLeft') {
-      // Left leg kicked out to the left
+      // Left leg shoots out sideways — exaggerated little kick
       g.beginPath();
-      g.moveTo(-10, 10);
-      g.lineTo(-6, 10);
-      g.lineTo(-22, 30);
-      g.lineTo(-28, 26);
+      g.moveTo(-8 + bodyLean, 10);
+      g.lineTo(-4 + bodyLean, 10);
+      g.lineTo(-30, 20);
+      g.lineTo(-36, 16);
       g.closePath();
       g.fillPath();
-      // Right leg standing
+      // Right leg planted, slightly bent
       g.beginPath();
-      g.moveTo(4, 10);
-      g.lineTo(8, 10);
-      g.lineTo(12, 30);
-      g.lineTo(4, 30);
+      g.moveTo(4 + bodyLean, 10);
+      g.lineTo(8 + bodyLean, 10);
+      g.lineTo(12 + bodyLean, 30);
+      g.lineTo(4 + bodyLean, 30);
       g.closePath();
       g.fillPath();
     } else if (pose === 'kickRight') {
-      // Left leg standing
+      // Left leg planted
       g.beginPath();
-      g.moveTo(-8, 10);
-      g.lineTo(-4, 10);
-      g.lineTo(-4, 30);
-      g.lineTo(-12, 30);
+      g.moveTo(-8 + bodyLean, 10);
+      g.lineTo(-4 + bodyLean, 10);
+      g.lineTo(-4 + bodyLean, 30);
+      g.lineTo(-12 + bodyLean, 30);
       g.closePath();
       g.fillPath();
-      // Right leg kicked out
+      // Right leg shoots out sideways
       g.beginPath();
-      g.moveTo(6, 10);
-      g.lineTo(10, 10);
-      g.lineTo(26, 22);
-      g.lineTo(22, 28);
+      g.moveTo(4 + bodyLean, 10);
+      g.lineTo(8 + bodyLean, 10);
+      g.lineTo(32, 18);
+      g.lineTo(28, 24);
+      g.closePath();
+      g.fillPath();
+    } else if (pose === 'doubleKick') {
+      // Both legs kicked forward and out — the big finale kick
+      g.beginPath();
+      g.moveTo(-6, 10);
+      g.lineTo(-2, 10);
+      g.lineTo(-22, 16);
+      g.lineTo(-28, 12);
+      g.closePath();
+      g.fillPath();
+      g.beginPath();
+      g.moveTo(2, 10);
+      g.lineTo(6, 10);
+      g.lineTo(24, 16);
+      g.lineTo(20, 12);
       g.closePath();
       g.fillPath();
     } else if (pose === 'stumble') {
-      // Wobbly legs
       g.beginPath();
       g.moveTo(-10, 10);
       g.lineTo(-6, 10);
@@ -556,7 +594,7 @@ export class LittleKicksScene extends Phaser.Scene {
       g.closePath();
       g.fillPath();
     } else {
-      // Idle / thumbsUp / fullSpin - normal stance
+      // Idle / headJerk / thumbsHike / fullSpin — normal stance
       g.beginPath();
       g.moveTo(-8, 10);
       g.lineTo(-4, 10);
@@ -576,8 +614,8 @@ export class LittleKicksScene extends Phaser.Scene {
     // --- Dress (red) ---
     g.fillStyle(0xe94560, 1);
     g.beginPath();
-    g.moveTo(-14, -18);
-    g.lineTo(14, -18);
+    g.moveTo(-14 + bodyLean, -18);
+    g.lineTo(14 + bodyLean, -18);
     g.lineTo(16, 14);
     g.lineTo(-16, 14);
     g.closePath();
@@ -589,67 +627,129 @@ export class LittleKicksScene extends Phaser.Scene {
 
     // --- Arms ---
     g.fillStyle(0xf2c89d, 1);
-    if (pose === 'kickLeft' || pose === 'kickRight') {
-      // Arms up in dance pose
+    if (pose === 'thumbsHike') {
+      // Both thumbs hiked up at hip level — Elaine's signature move
+      // Left arm: elbow out, fist at hip, thumb pointing up
+      g.beginPath();
+      g.moveTo(-14, -14);
+      g.lineTo(-18, -14);
+      g.lineTo(-28, -6);
+      g.lineTo(-26, -2);
+      g.closePath();
+      g.fillPath();
+      // Left fist
+      g.fillStyle(0xf2c89d, 1);
+      g.fillRoundedRect(-30, -8, 8, 8, 3);
+      // Left thumb pointing up
+      g.fillRect(-28, -16, 3, 10);
+
+      // Right arm: mirror
+      g.beginPath();
+      g.moveTo(14, -14);
+      g.lineTo(18, -14);
+      g.lineTo(28, -6);
+      g.lineTo(26, -2);
+      g.closePath();
+      g.fillPath();
+      // Right fist
+      g.fillRoundedRect(22, -8, 8, 8, 3);
+      // Right thumb pointing up
+      g.fillRect(25, -16, 3, 10);
+    } else if (pose === 'kickLeft' || pose === 'kickRight') {
+      // Arms flail opposite to the kick — jerky and awkward
+      const kickDir = pose === 'kickLeft' ? 1 : -1;
+      // Arm on kick side swings up
+      g.beginPath();
+      g.moveTo(-14 * kickDir + bodyLean, -16);
+      g.lineTo(-18 * kickDir + bodyLean, -16);
+      g.lineTo(-26 * kickDir, -38);
+      g.lineTo(-22 * kickDir, -40);
+      g.closePath();
+      g.fillPath();
+      g.fillCircle(-24 * kickDir, -40, 4);
+      // Other arm swings down/back
+      g.beginPath();
+      g.moveTo(14 * kickDir + bodyLean, -16);
+      g.lineTo(18 * kickDir + bodyLean, -16);
+      g.lineTo(22 * kickDir, 2);
+      g.lineTo(18 * kickDir, 4);
+      g.closePath();
+      g.fillPath();
+      g.fillCircle(20 * kickDir, 4, 4);
+    } else if (pose === 'headJerk') {
+      // Arms stiff at sides, elbows out — robotic jerky pose
       g.beginPath();
       g.moveTo(-14, -16);
       g.lineTo(-18, -16);
-      g.lineTo(-30, -35);
-      g.lineTo(-26, -37);
+      g.lineTo(-26, -8);
+      g.lineTo(-22, -6);
       g.closePath();
       g.fillPath();
-      g.fillCircle(-28, -37, 4);
+      // Forearm back in
+      g.beginPath();
+      g.moveTo(-26, -8);
+      g.lineTo(-22, -6);
+      g.lineTo(-18, 4);
+      g.lineTo(-22, 4);
+      g.closePath();
+      g.fillPath();
+      g.fillCircle(-20, 6, 4);
 
       g.beginPath();
       g.moveTo(14, -16);
       g.lineTo(18, -16);
-      g.lineTo(30, -35);
-      g.lineTo(26, -37);
+      g.lineTo(26, -8);
+      g.lineTo(22, -6);
       g.closePath();
       g.fillPath();
-      g.fillCircle(28, -37, 4);
-    } else if (pose === 'thumbsUp') {
-      // Left arm out, right arm thumbs up
+      g.beginPath();
+      g.moveTo(26, -8);
+      g.lineTo(22, -6);
+      g.lineTo(18, 4);
+      g.lineTo(22, 4);
+      g.closePath();
+      g.fillPath();
+      g.fillCircle(20, 6, 4);
+    } else if (pose === 'doubleKick') {
+      // Both arms thrown up in the air — wild abandon
       g.beginPath();
       g.moveTo(-14, -16);
       g.lineTo(-18, -16);
-      g.lineTo(-28, -5);
-      g.lineTo(-24, -3);
+      g.lineTo(-32, -42);
+      g.lineTo(-28, -44);
       g.closePath();
       g.fillPath();
-      g.fillCircle(-26, -3, 4);
+      g.fillCircle(-30, -44, 4);
 
       g.beginPath();
       g.moveTo(14, -16);
       g.lineTo(18, -16);
-      g.lineTo(22, -38);
-      g.lineTo(18, -39);
+      g.lineTo(32, -42);
+      g.lineTo(28, -44);
       g.closePath();
       g.fillPath();
-      // Thumbs up hand
-      g.fillCircle(20, -40, 4);
-      g.fillRect(19, -48, 3, 10);
+      g.fillCircle(30, -44, 4);
     } else if (pose === 'fullSpin') {
-      // Arms wide out
+      // Arms wide out for the spin
       g.beginPath();
       g.moveTo(-14, -16);
       g.lineTo(-18, -16);
-      g.lineTo(-35, -12);
-      g.lineTo(-34, -8);
+      g.lineTo(-36, -10);
+      g.lineTo(-35, -6);
       g.closePath();
       g.fillPath();
-      g.fillCircle(-35, -10, 4);
+      g.fillCircle(-36, -8, 4);
 
       g.beginPath();
       g.moveTo(14, -16);
       g.lineTo(18, -16);
-      g.lineTo(35, -12);
-      g.lineTo(34, -8);
+      g.lineTo(36, -10);
+      g.lineTo(35, -6);
       g.closePath();
       g.fillPath();
-      g.fillCircle(35, -10, 4);
+      g.fillCircle(36, -8, 4);
     } else if (pose === 'stumble') {
-      // Arms flailing
+      // Arms flailing asymmetrically
       g.beginPath();
       g.moveTo(-14, -16);
       g.lineTo(-18, -16);
@@ -668,7 +768,7 @@ export class LittleKicksScene extends Phaser.Scene {
       g.fillPath();
       g.fillCircle(24, 2, 4);
     } else {
-      // Idle - arms at sides
+      // Idle — arms at sides
       g.beginPath();
       g.moveTo(-14, -16);
       g.lineTo(-18, -16);
@@ -690,91 +790,118 @@ export class LittleKicksScene extends Phaser.Scene {
 
     // --- Neck ---
     g.fillStyle(0xf2c89d, 1);
-    g.fillRect(-3, -24, 6, 7);
+    g.fillRect(-3 + bodyLean, -24, 6, 7);
 
     // --- Head ---
-    const headTilt = pose === 'stumble' ? 3 : 0;
     g.fillStyle(0xf2c89d, 1);
-    g.fillEllipse(headTilt, -36, 20, 22);
+    g.fillEllipse(headTilt + bodyLean, -36, 20, 22);
 
     // --- Elaine's curly dark hair ---
+    const hx = headTilt + bodyLean;
     g.fillStyle(0x2a1508, 1);
-    g.fillEllipse(headTilt, -48, 24, 12);
-    g.fillEllipse(headTilt - 10, -42, 10, 14);
-    g.fillEllipse(headTilt + 10, -42, 10, 14);
-    // Curly strands
+    g.fillEllipse(hx, -48, 24, 12);
+    g.fillEllipse(hx - 10, -42, 10, 14);
+    g.fillEllipse(hx + 10, -42, 10, 14);
+    // Curly strands — wilder on head jerk
+    const hairBounce = pose === 'headJerk' ? 4 : pose === 'doubleKick' ? 3 : 0;
     g.lineStyle(3, 0x2a1508, 1);
     g.beginPath();
-    g.moveTo(headTilt - 10, -48);
-    g.lineTo(headTilt - 14, -55);
-    g.moveTo(headTilt - 5, -50);
-    g.lineTo(headTilt - 8, -57);
-    g.moveTo(headTilt + 5, -50);
-    g.lineTo(headTilt + 8, -57);
-    g.moveTo(headTilt + 10, -48);
-    g.lineTo(headTilt + 14, -55);
-    // Side curls
-    g.moveTo(headTilt - 12, -40);
-    g.lineTo(headTilt - 16, -36);
-    g.lineTo(headTilt - 14, -32);
-    g.moveTo(headTilt + 12, -40);
-    g.lineTo(headTilt + 16, -36);
-    g.lineTo(headTilt + 14, -32);
+    g.moveTo(hx - 10, -48);
+    g.lineTo(hx - 14 - hairBounce, -55 - hairBounce);
+    g.moveTo(hx - 5, -50);
+    g.lineTo(hx - 8, -57 - hairBounce);
+    g.moveTo(hx + 5, -50);
+    g.lineTo(hx + 8, -57 - hairBounce);
+    g.moveTo(hx + 10, -48);
+    g.lineTo(hx + 14 + hairBounce, -55 - hairBounce);
+    // Side curls — bounce outward on jerky moves
+    g.moveTo(hx - 12, -40);
+    g.lineTo(hx - 16 - hairBounce, -36);
+    g.lineTo(hx - 14 - hairBounce, -32);
+    g.moveTo(hx + 12, -40);
+    g.lineTo(hx + 16 + hairBounce, -36);
+    g.lineTo(hx + 14 + hairBounce, -32);
     g.strokePath();
 
     // --- Face ---
     // Eyes
     g.fillStyle(0xffffff, 1);
-    g.fillEllipse(headTilt - 4, -38, 6, 5);
-    g.fillEllipse(headTilt + 4, -38, 6, 5);
+    g.fillEllipse(hx - 4, -38, 6, 5);
+    g.fillEllipse(hx + 4, -38, 6, 5);
     g.fillStyle(0x332211, 1);
-    g.fillCircle(headTilt - 3, -38, 2);
-    g.fillCircle(headTilt + 5, -38, 2);
+    // Pupils look in head-jerk direction
+    const pupilShift = pose === 'headJerk' ? -1 : 0;
+    g.fillCircle(hx - 3 + pupilShift, -38, 2);
+    g.fillCircle(hx + 5 + pupilShift, -38, 2);
 
     // Eyebrows
     g.lineStyle(1.5, 0x2a1508, 1);
     if (pose === 'stumble') {
-      // Worried brows
       g.beginPath();
-      g.moveTo(headTilt - 7, -43);
-      g.lineTo(headTilt - 2, -42);
-      g.moveTo(headTilt + 2, -42);
-      g.lineTo(headTilt + 7, -43);
+      g.moveTo(hx - 7, -43);
+      g.lineTo(hx - 2, -42);
+      g.moveTo(hx + 2, -42);
+      g.lineTo(hx + 7, -43);
+      g.strokePath();
+    } else if (pose === 'headJerk' || pose === 'doubleKick') {
+      // Raised excited brows
+      g.beginPath();
+      g.moveTo(hx - 7, -44);
+      g.lineTo(hx - 2, -46);
+      g.moveTo(hx + 2, -46);
+      g.lineTo(hx + 7, -44);
       g.strokePath();
     } else {
       g.beginPath();
-      g.moveTo(headTilt - 7, -42);
-      g.lineTo(headTilt - 2, -43);
-      g.moveTo(headTilt + 2, -43);
-      g.lineTo(headTilt + 7, -42);
+      g.moveTo(hx - 7, -42);
+      g.lineTo(hx - 2, -43);
+      g.moveTo(hx + 2, -43);
+      g.lineTo(hx + 7, -42);
       g.strokePath();
     }
 
     // Nose
     g.lineStyle(1.5, 0xd4a574, 1);
     g.beginPath();
-    g.moveTo(headTilt, -38);
-    g.lineTo(headTilt + 1, -33);
+    g.moveTo(hx, -38);
+    g.lineTo(hx + 1, -33);
     g.strokePath();
 
     // Mouth
     g.lineStyle(2, 0xcc4444, 1);
     if (pose === 'stumble') {
-      // Surprised O mouth
       g.fillStyle(0xcc4444, 1);
-      g.fillEllipse(headTilt, -29, 6, 5);
+      g.fillEllipse(hx, -29, 6, 5);
     } else if (pose === 'idle') {
-      // Slight smile
       g.beginPath();
-      g.arc(headTilt, -30, 4, Phaser.Math.DegToRad(10), Phaser.Math.DegToRad(170));
+      g.arc(hx, -30, 4, Phaser.Math.DegToRad(10), Phaser.Math.DegToRad(170));
       g.strokePath();
-    } else {
-      // Big smile for dancing
+    } else if (pose === 'headJerk') {
+      // Teeth-clenched grin — the awkward Elaine face
       g.beginPath();
-      g.arc(headTilt, -30, 6, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(180));
+      g.arc(hx, -29, 6, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(180));
       g.strokePath();
       g.fillStyle(0xffffff, 1);
-      g.fillRect(headTilt - 4, -30, 8, 2);
+      g.fillRect(hx - 5, -29, 10, 3);
+      // Teeth lines
+      g.lineStyle(1, 0xcccccc, 0.6);
+      for (let tx = hx - 3; tx <= hx + 3; tx += 3) {
+        g.lineBetween(tx, -29, tx, -26);
+      }
+    } else if (pose === 'thumbsHike') {
+      // Confident grin
+      g.beginPath();
+      g.arc(hx, -29, 5, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(180));
+      g.strokePath();
+      g.fillStyle(0xffffff, 1);
+      g.fillRect(hx - 4, -29, 8, 2);
+    } else {
+      // Big open-mouth smile for kicking/spinning
+      g.beginPath();
+      g.arc(hx, -29, 6, Phaser.Math.DegToRad(0), Phaser.Math.DegToRad(180));
+      g.strokePath();
+      g.fillStyle(0xffffff, 1);
+      g.fillRect(hx - 4, -29, 8, 2);
     }
 
     // Label
@@ -788,13 +915,41 @@ export class LittleKicksScene extends Phaser.Scene {
     container.add(g);
     container.add(label);
 
-    // Full spin animation
+    // Pose-specific tweens
     if (pose === 'fullSpin') {
       this.tweens.add({
         targets: container,
         angle: 360,
         duration: 500,
         onComplete: () => { container.angle = 0; },
+      });
+    } else if (pose === 'headJerk') {
+      // Quick snap back and forth
+      this.tweens.add({
+        targets: container,
+        x: container.x + 6,
+        duration: 80,
+        yoyo: true,
+        repeat: 2,
+        ease: 'Sine.easeInOut',
+      });
+    } else if (pose === 'thumbsHike') {
+      // Little bounce up
+      this.tweens.add({
+        targets: container,
+        y: container.y - 8,
+        duration: 150,
+        yoyo: true,
+        ease: 'Sine.easeOut',
+      });
+    } else if (pose === 'doubleKick') {
+      // Jump up!
+      this.tweens.add({
+        targets: container,
+        y: container.y - 15,
+        duration: 200,
+        yoyo: true,
+        ease: 'Sine.easeOut',
       });
     }
   }
