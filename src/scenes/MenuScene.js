@@ -5,6 +5,7 @@ const GAMES = [
   { key: 'LaserPointerScene', title: 'The Laser Pointer', description: 'Zap George in the movie theater!' },
   { key: 'FroggerScene', title: 'The Frogger', description: 'Push the arcade machine across the street!' },
   { key: 'HoleInOneScene', title: 'Hole in One', description: 'Hit the whale with a golf ball as Kramer' },
+  { key: 'RyeMatch3Scene', title: 'Jerry vs. The Rye', description: 'Match-3 your way to placing the marble rye!' },
 ];
 
 export class MenuScene extends Phaser.Scene {
@@ -31,7 +32,7 @@ export class MenuScene extends Phaser.Scene {
 
     // Game selection buttons
     GAMES.forEach((game, index) => {
-      const y = 200 + index * 90;
+      const y = 180 + index * 72;
 
       const bg = this.add.rectangle(width / 2, y, 500, 62, 0x16213e)
         .setStrokeStyle(2, 0x0f3460)
