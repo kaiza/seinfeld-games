@@ -13,6 +13,7 @@ const GAMES = [
   { key: 'SoupNaziScene', title: 'The Soup Nazi', description: 'Serve the right soup before customers lose patience!' },
   { key: 'OilBladderScene', title: "Kramer's Oil Bladder", description: 'Drop the bladder from the roof and hit the girlfriend below!' },
   { key: 'SpareASquareScene', title: 'Spare a Square Rush', description: "Manage toilet stall paper inventory for impatient NPCs!" },
+  { key: 'LittleKicksScene', title: 'The Little Kicks', description: 'Match Elaine\'s dance moves with key combos!' },
 ];
 
 // Seinfeld-style letter offsets for the wavy baseline effect

@@ -9,6 +9,7 @@ import { RyeMatch3Scene } from './games/rye-match3/RyeMatch3Scene.js';
 import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
 import { OilBladderScene } from './games/oil-bladder/OilBladderScene.js';
 import { SpareASquareScene } from './games/spare-a-square/SpareASquareScene.js';
+import { LittleKicksScene } from './games/little-kicks/LittleKicksScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -34,6 +35,7 @@ const config = {
     SoupNaziScene,
     OilBladderScene,
     SpareASquareScene,
+    LittleKicksScene,
   ],
 };
 
