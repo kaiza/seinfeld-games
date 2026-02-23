@@ -6,6 +6,7 @@ import { MarbleRyeScene } from './games/marble-rye/MarbleRyeScene.js';
 import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
 import { ParkingGarageScene } from './games/parking-garage/ParkingGarageScene.js';
 import { LaserPointerScene } from './games/laser-pointer/LaserPointerScene.js';
+import { FroggerScene } from './games/frogger/FroggerScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -28,6 +29,7 @@ const config = {
     SoupNaziScene,
     ParkingGarageScene,
     LaserPointerScene,
+    FroggerScene,
   ],
 };
 
