@@ -21,7 +21,6 @@ export class HoleInOneScene extends Phaser.Scene {
     this.missMessages = [
       'Oops! Try again!',
       'Not even close!',
-      'The sea was angry that day, my friends!',
       'Swing and a miss!',
       'That ball is gone forever!',
     ];
@@ -314,7 +313,9 @@ export class HoleInOneScene extends Phaser.Scene {
     this.ball.body.enable = false;
     this.ball.body.setVelocity(0, 0);
 
-    const msg = Phaser.Utils.Array.GetRandom(this.missMessages);
+    const msg = Math.random() < 0.5
+      ? 'The sea was angry that day, my friends!'
+      : Phaser.Utils.Array.GetRandom(this.missMessages);
     this.showFlash(msg, '#e94560');
   }
 
