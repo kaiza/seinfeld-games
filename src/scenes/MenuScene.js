@@ -14,6 +14,8 @@ const GAMES = [
   { key: 'OilBladderScene', title: "Kramer's Oil Bladder", description: 'Drop the bladder from the roof and hit the girlfriend below!' },
   { key: 'SpareASquareScene', title: 'Spare a Square Rush', description: "Manage toilet stall paper inventory for impatient NPCs!" },
   { key: 'MailChaosScene', title: 'Mail Route Chaos', description: 'Deliver mail while dodging dogs, rain, and your own laziness!' },
+  { key: 'LittleKicksScene', title: 'The Little Kicks', description: 'Match Elaine\'s dance moves with key combos!' },
+  { key: 'JeanPaulScene', title: "Jean-Paul's Marathon", description: "Drive Jean-Paul to the NYC marathon before 9:00 AM!" },
 ];
 
 // Seinfeld-style letter offsets for the wavy baseline effect

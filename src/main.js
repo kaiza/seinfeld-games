@@ -10,6 +10,8 @@ import { SoupNaziScene } from './games/soup-nazi/SoupNaziScene.js';
 import { OilBladderScene } from './games/oil-bladder/OilBladderScene.js';
 import { SpareASquareScene } from './games/spare-a-square/SpareASquareScene.js';
 import { MailChaosScene } from './games/mail-chaos/MailChaosScene.js';
+import { LittleKicksScene } from './games/little-kicks/LittleKicksScene.js';
+import { JeanPaulScene } from './games/jean-paul/JeanPaulScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -36,6 +38,8 @@ const config = {
     OilBladderScene,
     SpareASquareScene,
     MailChaosScene,
+    LittleKicksScene,
+    JeanPaulScene,
   ],
 };
 
