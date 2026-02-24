@@ -6,10 +6,10 @@ import { ensureThemePlaying } from '../../scenes/BootScene.js';
  *
  * Newman is on his mail route — deliver letters to mailboxes
  * before his laziness meter fills up completely. Dodge the dogs
- * and slow-moving rain. Press SPACE near a raised-flag mailbox
- * to deliver a letter (cuts the laziness bar and scores a point).
+ * and slow-moving rain. Walk near a raised-flag mailbox to
+ * deliver a letter (cuts the laziness bar and scores a point).
  *
- * Controls: Arrow Left / Right to walk, SPACE to deliver mail.
+ * Controls: Arrow keys to walk. Walk near a raised-flag mailbox to deliver mail.
  */
 
 // ---------- CONSTANTS ----------
@@ -69,7 +69,8 @@ export class MailChaosScene extends Phaser.Scene {
     this.startText = this.add.text(width / 2, height / 2, [
       'MAIL ROUTE CHAOS',
       '',
-      '← → ↑ ↓ Move   SPACE Deliver',
+      '← → ↑ ↓ Move',
+      'Walk to a raised-flag mailbox to deliver!',
       '',
       'Press any arrow key to start!',
     ], {
@@ -595,8 +596,6 @@ export class MailChaosScene extends Phaser.Scene {
   }
 
   checkDelivery() {
-    if (!Phaser.Input.Keyboard.JustDown(this.spaceKey)) return;
-
     const near = this.mailboxes.find(
       (m) => m.hasmail && Math.abs(this.player.x - m.x) < 50 && this.player.y - m.container.y < MAILBOX_REACH_Y,
     );
