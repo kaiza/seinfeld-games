@@ -172,7 +172,8 @@ export class FroggerScene extends Phaser.Scene {
 
   spawnVehicle(x, y, laneIndex) {
     const config = LANE_CONFIGS[laneIndex];
-    const speed = Phaser.Math.Between(config.speedMin, config.speedMax) * this.level;
+    const speedMultiplier = 1 + (this.level - 1) * 0.25;
+    const speed = Phaser.Math.Between(config.speedMin, config.speedMax) * speedMultiplier;
 
     // Create vehicle as a rectangle with physics
     const vehicle = this.add.rectangle(x, y, config.w, config.h, config.color)
@@ -301,6 +302,9 @@ export class FroggerScene extends Phaser.Scene {
 
     if (targetX === this.player.x && targetY === this.player.y) return;
 
+    // Move sound
+    this.playMoveSound();
+
     // Hop animation
     this.isMoving = true;
     this.tweens.add({
@@ -401,9 +405,10 @@ export class FroggerScene extends Phaser.Scene {
   }
 
   speedUpTraffic() {
+    const speedMultiplier = 1 + (this.level - 1) * 0.25;
     this.vehicles.getChildren().forEach((v) => {
       const config = LANE_CONFIGS[v.laneIndex];
-      const speed = Phaser.Math.Between(config.speedMin, config.speedMax) * this.level;
+      const speed = Phaser.Math.Between(config.speedMin, config.speedMax) * speedMultiplier;
       v.body.setVelocityX(speed * config.dir);
     });
   }
@@ -467,6 +472,28 @@ export class FroggerScene extends Phaser.Scene {
     menuBtn.on('pointerover', () => menuBtn.setColor('#e94560'));
     menuBtn.on('pointerout', () => menuBtn.setColor('#888888'));
     menuBtn.on('pointerdown', () => this.scene.start('MenuScene'));
+  }
+
+  playMoveSound() {
+    const ctx = this.sound.context;
+    if (!ctx) return;
+
+    const oscillator = ctx.createOscillator();
+    const gainNode = ctx.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(ctx.destination);
+
+    // A short descending ring tone reminiscent of an old arcade beep
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(900, ctx.currentTime);
+    oscillator.frequency.exponentialRampToValueAtTime(450, ctx.currentTime + 0.15);
+
+    gainNode.gain.setValueAtTime(0.25, ctx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+
+    oscillator.start(ctx.currentTime);
+    oscillator.stop(ctx.currentTime + 0.15);
   }
 
   addBackButton() {
