@@ -22,6 +22,12 @@ const MAIL_BOOST = 22;           // laziness % removed per delivery
 const RAIN_SPEED_MULT = 0.5;     // player speed multiplier while raining
 const INVINCIBILITY_MS = 2000;
 
+// Vertical play area boundaries (pavement strip)
+const PLAY_TOP_Y    = GROUND_Y - 20;  // upper boundary for player/dog movement
+const PLAY_BOTTOM_Y = 570;            // lower boundary for player/dog movement
+const DOG_SPEED_Y   = 55;            // vertical dog patrol speed
+const MAILBOX_REACH_Y = 100;         // how far below the mailbox row Newman can still deliver
+
 // Positions of the 5 houses (mailbox x-centres)
 const HOUSE_XS = [90, 220, 370, 520, 670];
 
@@ -63,9 +69,9 @@ export class MailChaosScene extends Phaser.Scene {
     this.startText = this.add.text(width / 2, height / 2, [
       'MAIL ROUTE CHAOS',
       '',
-      '← → Move   SPACE Deliver',
+      '← → ↑ ↓ Move   SPACE Deliver',
       '',
-      'Press ← or → to start!',
+      'Press any arrow key to start!',
     ], {
       fontSize: '18px',
       fontFamily: 'Courier New',
@@ -291,7 +297,8 @@ export class MailChaosScene extends Phaser.Scene {
   }
 
   spawnDog(startX) {
-    const container = this.add.container(startX, GROUND_Y - 12).setDepth(40);
+    const startY = Phaser.Math.Between(PLAY_TOP_Y, PLAY_BOTTOM_Y);
+    const container = this.add.container(startX, startY).setDepth(40);
     const g = this.add.graphics();
 
     // Body
@@ -341,7 +348,9 @@ export class MailChaosScene extends Phaser.Scene {
     container.body.setCollideWorldBounds(true);
 
     const dir = Phaser.Math.Between(0, 1) === 0 ? 1 : -1;
+    const dirY = Phaser.Math.Between(0, 1) === 0 ? 1 : -1;
     container.body.setVelocityX(DOG_SPEED * dir);
+    container.body.setVelocityY(DOG_SPEED_Y * dirY);
     container.chaseTimer = 0;
     container.facingRight = dir === 1;
 
@@ -469,7 +478,8 @@ export class MailChaosScene extends Phaser.Scene {
   update(time, delta) {
     if (!this.isPlaying) {
       // Start on first key press
-      if (this.cursors.left.isDown || this.cursors.right.isDown) {
+      if (this.cursors.left.isDown || this.cursors.right.isDown ||
+          this.cursors.up.isDown || this.cursors.down.isDown) {
         this.isPlaying = true;
         if (this.startText) {
           this.startText.destroy();
@@ -500,16 +510,29 @@ export class MailChaosScene extends Phaser.Scene {
       this.player.body.setVelocityX(0);
     }
 
-    // Keep Newman on the pavement
-    this.player.y = this.playerStartY;
-    this.player.body.setVelocityY(0);
+    if (this.cursors.up.isDown) {
+      this.player.body.setVelocityY(-speed);
+    } else if (this.cursors.down.isDown) {
+      this.player.body.setVelocityY(speed);
+    } else {
+      this.player.body.setVelocityY(0);
+    }
+
+    // Clamp player within the pavement play area
+    if (this.player.y < PLAY_TOP_Y) {
+      this.player.y = PLAY_TOP_Y;
+      this.player.body.setVelocityY(0);
+    } else if (this.player.y > PLAY_BOTTOM_Y) {
+      this.player.y = PLAY_BOTTOM_Y;
+      this.player.body.setVelocityY(0);
+    }
   }
 
   updateDogs() {
     const { width } = this.scale;
 
     this.dogList.forEach((dog) => {
-      // Bounce off screen edges
+      // Bounce off horizontal screen edges
       if (dog.x < 30) {
         dog.x = 30;
         dog.body.setVelocityX(Math.abs(dog.body.velocity.x));
@@ -520,6 +543,15 @@ export class MailChaosScene extends Phaser.Scene {
         dog.facingRight = false;
       }
 
+      // Bounce off vertical play area boundaries
+      if (dog.y < PLAY_TOP_Y) {
+        dog.y = PLAY_TOP_Y;
+        dog.body.setVelocityY(Math.abs(dog.body.velocity.y));
+      } else if (dog.y > PLAY_BOTTOM_Y) {
+        dog.y = PLAY_BOTTOM_Y;
+        dog.body.setVelocityY(-Math.abs(dog.body.velocity.y));
+      }
+
       // Flip sprite to match direction
       const goingRight = dog.body.velocity.x > 0;
       if (goingRight !== dog.facingRight) {
@@ -527,14 +559,18 @@ export class MailChaosScene extends Phaser.Scene {
         dog.scaleX = goingRight ? 1 : -1;
       }
 
-      // Occasionally chase Newman when close
+      // Occasionally chase Newman when close (in 2D)
       dog.chaseTimer++;
       if (dog.chaseTimer >= 90) {
         dog.chaseTimer = 0;
         const dx = this.player.x - dog.x;
-        if (Math.abs(dx) < 220 && this.isPlaying) {
+        const dy = this.player.y - dog.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 220 && this.isPlaying) {
           const chaseSpeed = DOG_SPEED * 1.6;
+          const chaseSpeedY = DOG_SPEED_Y * 1.6;
           dog.body.setVelocityX(dx > 0 ? chaseSpeed : -chaseSpeed);
+          dog.body.setVelocityY(dy > 0 ? chaseSpeedY : -chaseSpeedY);
         }
       }
     });
@@ -549,7 +585,7 @@ export class MailChaosScene extends Phaser.Scene {
   }
 
   updateLaziness(delta) {
-    const isIdle    = Math.abs(this.player.body.velocity.x) < 5;
+    const isIdle    = Math.abs(this.player.body.velocity.x) < 5 && Math.abs(this.player.body.velocity.y) < 5;
     const fillRate  = isIdle ? LAZINESS_IDLE_RATE : LAZINESS_FILL_RATE;
     this.laziness   = Math.min(100, this.laziness + (fillRate * delta) / 1000);
 
@@ -562,7 +598,7 @@ export class MailChaosScene extends Phaser.Scene {
     if (!Phaser.Input.Keyboard.JustDown(this.spaceKey)) return;
 
     const near = this.mailboxes.find(
-      (m) => m.hasmail && Math.abs(this.player.x - m.x) < 50,
+      (m) => m.hasmail && Math.abs(this.player.x - m.x) < 50 && this.player.y < PLAY_TOP_Y + MAILBOX_REACH_Y,
     );
     if (!near) return;
 
