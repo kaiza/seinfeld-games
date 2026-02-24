@@ -139,19 +139,19 @@ export class FestivusScene extends Phaser.Scene {
   }
 
   createCharacters(width, height) {
-    // Jerry (player) on left, Frank on right
+    // George (player) on left, Frank on right
     const groundY = height - 155;
 
-    // Jerry
-    this.jerryContainer = this.add.container(160, groundY).setDepth(10);
-    this._buildJerry(this.jerryContainer);
+    // George
+    this.georgeContainer = this.add.container(160, groundY).setDepth(10);
+    this._buildGeorge(this.georgeContainer);
 
     // Frank
     this.frankContainer = this.add.container(640, groundY).setDepth(10);
     this._buildFrank(this.frankContainer);
 
     // Name labels
-    this.add.text(160, groundY + 75, 'Jerry', {
+    this.add.text(160, groundY + 75, 'George', {
       fontSize: '14px', fontFamily: 'Courier New', color: '#88bbff',
     }).setOrigin(0.5).setDepth(10);
 
@@ -160,25 +160,26 @@ export class FestivusScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(10);
   }
 
-  _buildJerry(c) {
-    // Body
-    c.add(this.add.rectangle(0, 20, 36, 50, 0x4488cc));
-    // Head
-    c.add(this.add.circle(0, -18, 20, 0xd4a574));
-    // Hair (brown)
-    c.add(this.add.ellipse(0, -33, 36, 16, 0x553311));
+  _buildGeorge(c) {
+    // Body (stockier, khaki)
+    c.add(this.add.rectangle(0, 22, 40, 52, 0xc8a84a));
+    // Head (rounder)
+    c.add(this.add.circle(0, -16, 22, 0xd4a574));
+    // Balding — just a thin fringe of dark hair at sides
+    c.add(this.add.ellipse(-16, -30, 14, 10, 0x331100));
+    c.add(this.add.ellipse(16, -30, 14, 10, 0x331100));
     // Eyes
-    c.add(this.add.circle(-7, -20, 3, 0x222222));
-    c.add(this.add.circle(7, -20, 3, 0x222222));
-    // Mouth (determined)
-    c.add(this.add.rectangle(0, -10, 12, 3, 0x993333));
+    c.add(this.add.circle(-7, -18, 3, 0x222222));
+    c.add(this.add.circle(7, -18, 3, 0x222222));
+    // Mouth (determined grimace)
+    c.add(this.add.rectangle(0, -8, 14, 3, 0x993333));
     // Arms raised (wrestling stance) - left arm
-    c.add(this.add.rectangle(-26, 2, 6, 28, 0xd4a574).setRotation(-0.4));
+    c.add(this.add.rectangle(-26, 4, 6, 28, 0xd4a574).setRotation(-0.4));
     // Right arm
-    c.add(this.add.rectangle(26, 2, 6, 28, 0xd4a574).setRotation(0.4));
+    c.add(this.add.rectangle(26, 4, 6, 28, 0xd4a574).setRotation(0.4));
     // Legs
-    c.add(this.add.rectangle(-9, 54, 14, 28, 0x336699));
-    c.add(this.add.rectangle(9, 54, 14, 28, 0x336699));
+    c.add(this.add.rectangle(-9, 56, 14, 28, 0x445533));
+    c.add(this.add.rectangle(9, 56, 14, 28, 0x445533));
   }
 
   _buildFrank(c) {
@@ -212,7 +213,7 @@ export class FestivusScene extends Phaser.Scene {
 
     // Arrow hints below bar
     this.arrowHint = this.add.text(BAR_CX, BAR_Y + 40,
-      '← FRANK        JERRY →', {
+      '← FRANK        GEORGE →', {
         fontSize: '11px',
         fontFamily: 'Courier New',
         color: '#888888',
@@ -313,9 +314,9 @@ export class FestivusScene extends Phaser.Scene {
   }
 
   _updateWinsText() {
-    const jer = '★'.repeat(this.playerWins) + '☆'.repeat(WINS_NEEDED - this.playerWins);
+    const geo = '★'.repeat(this.playerWins) + '☆'.repeat(WINS_NEEDED - this.playerWins);
     const fra = '★'.repeat(this.frankWins) + '☆'.repeat(WINS_NEEDED - this.frankWins);
-    this.winsText.setText(`Jerry ${jer}   ${fra} Frank`);
+    this.winsText.setText(`George ${geo}   ${fra} Frank`);
   }
 
   // ==================== GAME LOGIC ====================
@@ -402,11 +403,11 @@ export class FestivusScene extends Phaser.Scene {
     this.mashText.setText(`Mashes: ${this.mashCount}`);
     this._redrawBar();
 
-    // Animate Jerry leaning forward
-    this.tweens.killTweensOf(this.jerryContainer);
-    this.jerryContainer.setRotation(-0.12);
+    // Animate George leaning forward
+    this.tweens.killTweensOf(this.georgeContainer);
+    this.georgeContainer.setRotation(-0.12);
     this.tweens.add({
-      targets: this.jerryContainer,
+      targets: this.georgeContainer,
       rotation: 0,
       duration: 200,
       ease: 'Sine.easeOut',
@@ -460,8 +461,8 @@ export class FestivusScene extends Phaser.Scene {
     } else {
       this.frankWins++;
       this.resultText.setText('FRANK WINS!').setColor('#ff4444');
-      // Tilt Jerry (pinned)
-      this.tweens.add({ targets: this.jerryContainer, rotation: -1.4, duration: 400 });
+      // Tilt George (pinned)
+      this.tweens.add({ targets: this.georgeContainer, rotation: -1.4, duration: 400 });
     }
 
     this.resultText.setAlpha(1).setScale(1);
@@ -480,7 +481,7 @@ export class FestivusScene extends Phaser.Scene {
 
     this.time.delayedCall(1800, () => {
       // Reset character rotations
-      this.jerryContainer.setRotation(0);
+      this.georgeContainer.setRotation(0);
       this.frankContainer.setRotation(0);
       this.resultText.setAlpha(0);
 
@@ -527,7 +528,7 @@ export class FestivusScene extends Phaser.Scene {
       fontStyle: 'italic',
     }).setOrigin(0.5).setDepth(151);
 
-    this.add.text(width / 2, height / 2 - 10, `Jerry ${this.playerWins}  –  ${this.frankWins} Frank`, {
+    this.add.text(width / 2, height / 2 - 10, `George ${this.playerWins}  –  ${this.frankWins} Frank`, {
       fontSize: '28px',
       fontFamily: 'Courier New',
       color: '#ffffff',
@@ -543,7 +544,7 @@ export class FestivusScene extends Phaser.Scene {
     // Festivus quote
     const quote = playerWon
       ? '"Many Festivus miracles tonight!"'
-      : '"You\'ll be wrestling until you pin me, Jerry!"';
+      : '"You\'ll be wrestling until you pin me, George!"';
     this.add.text(width / 2, height / 2 + 62, quote, {
       fontSize: '13px',
       fontFamily: 'Georgia, serif',
