@@ -19,6 +19,7 @@ export class OilBladderScene extends Phaser.Scene {
     this.bladderInFlight = false;
     this.girlfriendSpeed = 100;
     this.girlfriendDirection = 1;
+    this.kramerSpeed = 80;
     this.missMessages = [
       'Oil everywhere but on her!',
       'The bladder system needs work!',
@@ -52,6 +53,10 @@ export class OilBladderScene extends Phaser.Scene {
     const buildingW = 140;
     const buildingTop = 100;
     const buildingBottom = height - 110;
+    this.buildingTop = buildingTop;
+    this.buildingBottom = buildingBottom;
+    this.kramerLeft = buildingX + 15;
+    this.kramerRight = buildingX + buildingW - 15;
 
     const building = this.add.graphics();
     // Building body
@@ -79,9 +84,7 @@ export class OilBladderScene extends Phaser.Scene {
     // Drop zone indicator (dashed line from roof to street)
     this.dropLine = this.add.graphics();
     this.dropLine.lineStyle(2, 0xffcc00, 0.35);
-    for (let y = buildingTop; y < buildingBottom; y += 20) {
-      this.dropLine.lineBetween(width / 2, y, width / 2, Math.min(y + 10, buildingBottom));
-    }
+    this.dropLine.lineBetween(width / 2, buildingTop, width / 2, buildingBottom);
 
     // --- Street ---
     const street = this.add.graphics();
@@ -116,6 +119,10 @@ export class OilBladderScene extends Phaser.Scene {
     this.kramerContainer = this.add.container(width / 2, buildingTop - 4);
     this.drawKramer(this.kramerContainer);
     this.kramerContainer.setDepth(8);
+    this.physics.world.enable(this.kramerContainer);
+    this.kramerContainer.body.setSize(30, 70);
+    this.kramerContainer.body.setOffset(-15, -70);
+    this.kramerContainer.body.setVelocityX(this.kramerSpeed);
 
     // --- Oil bladder (physics object — starts hidden) ---
     this.bladderGfx = this.add.graphics();
@@ -191,6 +198,16 @@ export class OilBladderScene extends Phaser.Scene {
       if (!this.bladderInFlight) this.dropBladder();
     }
 
+    // Kramer bounces on the rooftop
+    const kr = this.kramerContainer;
+    if (kr.x < this.kramerLeft) {
+      kr.x = this.kramerLeft;
+      kr.body.setVelocityX(this.kramerSpeed);
+    } else if (kr.x > this.kramerRight) {
+      kr.x = this.kramerRight;
+      kr.body.setVelocityX(-this.kramerSpeed);
+    }
+
     // Girlfriend bounces off screen edges
     const gf = this.girlfriendContainer;
     if (gf.x < 50) {
@@ -203,6 +220,11 @@ export class OilBladderScene extends Phaser.Scene {
       gf.body.setVelocityX(-this.girlfriendSpeed);
     }
 
+    // Update drop-line to follow Kramer
+    this.dropLine.clear();
+    this.dropLine.lineStyle(2, 0xffcc00, 0.35);
+    this.dropLine.lineBetween(kr.x, this.buildingTop, kr.x, this.buildingBottom);
+
     // Bladder hits the ground or exits frame
     if (this.bladderInFlight && this.bladderGfx.y > height) {
       this.onMiss();
@@ -210,7 +232,7 @@ export class OilBladderScene extends Phaser.Scene {
   }
 
   dropBladder() {
-    this.bladderGfx.setPosition(this.dropX, this.dropStartY);
+    this.bladderGfx.setPosition(this.kramerContainer.x, this.dropStartY);
     this.bladderGfx.setVisible(true);
     this.bladderGfx.body.enable = true;
     this.bladderGfx.body.setVelocity(0, 0);
