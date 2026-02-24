@@ -26,7 +26,7 @@ const INVINCIBILITY_MS = 2000;
 const PLAY_TOP_Y    = GROUND_Y - 20;  // upper boundary for player/dog movement
 const PLAY_BOTTOM_Y = 570;            // lower boundary for player/dog movement
 const DOG_SPEED_Y   = 55;            // vertical dog patrol speed
-const MAILBOX_REACH_Y = 100;         // how far below the mailbox row Newman can still deliver
+const MAILBOX_REACH_Y = 150;         // how far below the mailbox row Newman can still deliver
 
 // Positions of the 5 houses (mailbox x-centres)
 const HOUSE_XS = [90, 220, 370, 520, 670];
@@ -598,7 +598,7 @@ export class MailChaosScene extends Phaser.Scene {
     if (!Phaser.Input.Keyboard.JustDown(this.spaceKey)) return;
 
     const near = this.mailboxes.find(
-      (m) => m.hasmail && Math.abs(this.player.x - m.x) < 50 && this.player.y < PLAY_TOP_Y + MAILBOX_REACH_Y,
+      (m) => m.hasmail && Math.abs(this.player.x - m.x) < 50 && this.player.y - m.container.y < MAILBOX_REACH_Y,
     );
     if (!near) return;
 
