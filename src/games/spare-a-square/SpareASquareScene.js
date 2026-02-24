@@ -5,7 +5,7 @@ import { ensureThemePlaying } from '../../scenes/BootScene.js';
  * Spare a Square Rush – Walk-around Edition
  *
  * Inspired by "The Stall" (S5E12).
- * Walk your character to the janitor's closet to pick up toilet rolls (max 3),
+ * Walk your character to the janitor's closet to pick up toilet rolls (max 5),
  * then walk to each stall's doorway to refill the paper before NPCs run out!
  *
  * Controls:
@@ -45,7 +45,7 @@ const PLAYER_RADIUS = 13;
 // ── Game tuning ───────────────────────────────────────────────────────────────
 const ROUND_DURATION   = 90;
 const STARTING_LIVES   = 3;
-const MAX_INVENTORY    = 3;
+const MAX_INVENTORY    = 5;
 const GRACE_PERIOD     = 5000;   // ms before unhappy NPC leaves after paper runs out
 const NPC_MIN_STAY     = 7000;
 const NPC_MAX_STAY     = 16000;
@@ -56,7 +56,7 @@ const DEPLETION_MID    = 8;
 const DEPLETION_HARD   = 11;
 const RAMP_MID_TIME    = 60;
 const RAMP_HARD_TIME   = 30;
-const COLLECT_INTERVAL = 1600;   // ms to pick up one roll while standing in closet
+const COLLECT_INTERVAL = 800;    // ms to pick up one roll while standing in closet
 const DELIVER_COOLDOWN = 900;    // ms between deliveries to the same stall
 const DELIVERY_ZONE_H  = 50;    // px below FLOOR_TOP that counts as "at the stall door"
 const REFILL_THRESHOLD = 90;    // % paper level below which proactive refill triggers
@@ -113,7 +113,7 @@ export class SpareASquareScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(91);
 
     const lines = [
-      "Walk to the JANITOR'S CLOSET to pick up rolls (max 3).",
+      "Walk to the JANITOR'S CLOSET to pick up rolls (max 5).",
       'Walk to a stall doorway to refill toilet paper.',
       'Keep all stalls stocked before NPCs run out!',
       '',
@@ -342,9 +342,7 @@ export class SpareASquareScene extends Phaser.Scene {
       pct > 0.10 ? 0xdd8800 : 0xcc3333;
     stall.barFill.setFillStyle(color);
 
-    if (stall.state === S.OCCUPIED) {
-      stall.warnText.setVisible(stall.paperLevel <= 28).setText('⚠');
-    }
+    stall.warnText.setVisible(stall.paperLevel <= 28 && stall.state !== S.LEAVING).setText('⚠');
   }
 
   // ──────────────────────────────────────────────────────────────────────────
@@ -536,7 +534,7 @@ export class SpareASquareScene extends Phaser.Scene {
         Math.abs(this.playerX - stall.cx) < (STALL_W / 2 - WALL_W + 10)
       );
       const needsPaper = stall.state === S.OUT_OF_PAPER ||
-                         (stall.state === S.OCCUPIED && stall.paperLevel < REFILL_THRESHOLD);
+                         (stall.state !== S.LEAVING && stall.paperLevel < REFILL_THRESHOLD);
       const canDeliver = inZone && this.inventory > 0 && needsPaper &&
                          (now - stall.lastDelivery) > DELIVER_COOLDOWN;
 
@@ -602,7 +600,7 @@ export class SpareASquareScene extends Phaser.Scene {
       this.drawInvRoll(g, false, 108 + i * 42, invY + 8);
     }
 
-    this.invCountText = this.add.text(244, invY, `0/${MAX_INVENTORY}`, {
+    this.invCountText = this.add.text(108 + MAX_INVENTORY * 42, invY, `0/${MAX_INVENTORY}`, {
       fontSize: '12px', fontFamily: 'Courier New', color: '#666666',
     }).setDepth(50);
 
@@ -703,7 +701,6 @@ export class SpareASquareScene extends Phaser.Scene {
 
   enterStall(stall) {
     stall.state      = S.OCCUPIED;
-    stall.paperLevel = 100;
     stall.npcSkin    = Phaser.Utils.Array.GetRandom(SKIN_TONES);
     stall.npcHair    = Phaser.Utils.Array.GetRandom(HAIR_COLORS);
 
@@ -713,7 +710,6 @@ export class SpareASquareScene extends Phaser.Scene {
     stall.statusText.setText('OCCUPIED').setColor('#cc4444');
     this.refreshDoorColor(stall);
     this.updateTPBar(stall);
-    stall.warnText.setVisible(false);
 
     // Slide-in animation
     const origY = stall.faceContainer.y;
@@ -827,12 +823,10 @@ export class SpareASquareScene extends Phaser.Scene {
 
     this.time.delayedCall(400, () => {
       stall.state      = S.EMPTY;
-      stall.paperLevel = 100;
       stall.npcSkin    = null;
       stall.npcHair    = null;
       stall.statusText.setText('VACANT').setColor('#33aa33');
       this.updateTPBar(stall);
-      stall.warnText.setVisible(false);
       this.refreshDoorColor(stall);
     });
   }
