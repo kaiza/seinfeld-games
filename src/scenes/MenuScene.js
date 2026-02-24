@@ -17,6 +17,7 @@ const GAMES = [
   { key: 'MailChaosScene', title: 'Mail Route Chaos', description: 'Deliver mail while dodging dogs, rain, and your own laziness!' },
   { key: 'LittleKicksScene', title: 'The Little Kicks', description: 'Match Elaine\'s dance moves with key combos!' },
   { key: 'JeanPaulScene', title: "Jean-Paul's Marathon", description: "Drive Jean-Paul to the NYC marathon before 9:00 AM!" },
+  { key: 'FireEscapeScene', title: 'Fire Escape Scramble', description: "Shove past birthday kids while fleeing the fire — score for selfishness!" },
 ];
 
 // Seinfeld-style letter offsets for the wavy baseline effect
