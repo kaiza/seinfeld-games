@@ -235,7 +235,7 @@ export class OilBladderScene extends Phaser.Scene {
     this.bladderGfx.setPosition(this.kramerContainer.x, this.dropStartY);
     this.bladderGfx.setVisible(true);
     this.bladderGfx.body.enable = true;
-    this.bladderGfx.body.setVelocity(0, 0);
+    this.bladderGfx.body.setVelocity(this.kramerContainer.body.velocity.x, 0);
     this.bladderGfx.body.setGravityY(400);
     this.bladderInFlight = true;
 
