@@ -24,7 +24,6 @@ export class OilBladderScene extends Phaser.Scene {
       'The bladder system needs work!',
       "She's too fast for you!",
       'Not even close, Cosmo!',
-      'The sea was angry that day!',
     ];
   }
 
