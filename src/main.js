@@ -14,6 +14,7 @@ import { MailChaosScene } from './games/mail-chaos/MailChaosScene.js';
 import { LittleKicksScene } from './games/little-kicks/LittleKicksScene.js';
 import { JeanPaulScene } from './games/jean-paul/JeanPaulScene.js';
 import { FireEscapeScene } from './games/fire-escape/FireEscapeScene.js';
+import { PlaceToBeScene } from './games/place-to-be/PlaceToBeScene.js';
 
 const config = {
   type: Phaser.AUTO,
@@ -44,6 +45,7 @@ const config = {
     LittleKicksScene,
     JeanPaulScene,
     FireEscapeScene,
+    PlaceToBeScene,
   ],
 };
 
